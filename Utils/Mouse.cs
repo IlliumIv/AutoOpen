@@ -29,20 +29,19 @@ namespace AutoOpen.Utils
 
         public static Point GetCursorPosition()
         {
-            Point lpPoint;
-            GetCursorPos(out lpPoint);
+            GetCursorPos(out Point lpPoint);
 
             return lpPoint;
         }
 
         [DllImport("user32.dll")]
-        private static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
+        private static extern void Mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 
         [DllImport("user32.dll")]
         private static extern bool BlockInput(bool block);
 
 
-        public static void moveMouse(Vector2 pos)
+        public static void MoveMouse(Vector2 pos)
         {
             SetCursorPos((int) pos.X, (int) pos.Y);
             Thread.Sleep(DELAY_MOVE);
@@ -50,29 +49,29 @@ namespace AutoOpen.Utils
 
         public static void LeftDown(int delay)
         {
-            mouse_event((int) MouseEvents.LeftDown, 0, 0, 0, 0);
+            Mouse_event((int) MouseEvents.LeftDown, 0, 0, 0, 0);
             Thread.Sleep(DELAY_CLICK + delay);
         }
 
         public static void LeftUp(int delay)
         {
-            mouse_event((int) MouseEvents.LeftUp, 0, 0, 0, 0);
+            Mouse_event((int) MouseEvents.LeftUp, 0, 0, 0, 0);
             Thread.Sleep(DELAY_CLICK + delay);
         }
 
         public static void RightDown(int delay)
         {
-            mouse_event((int) MouseEvents.RightDown, 0, 0, 0, 0);
+            Mouse_event((int) MouseEvents.RightDown, 0, 0, 0, 0);
             Thread.Sleep(DELAY_CLICK + delay);
         }
 
         public static void RightUp(int delay)
         {
-            mouse_event((int) MouseEvents.RightUp, 0, 0, 0, 0);
+            Mouse_event((int) MouseEvents.RightUp, 0, 0, 0, 0);
             Thread.Sleep(DELAY_CLICK + delay);
         }
 
-        public static void blockInput(bool block)
+        public static void BlockInput_(bool block)
         {
             BlockInput(block);
         }

@@ -30,19 +30,19 @@ namespace AutoOpen
 
             ingameState = GameController.Game.IngameState;
             windowOffset = GameController.Window.GetWindowRectangle().TopLeft;
-            loadDoorBlacklist();
-            loadSwitchBlacklist();
-            loadChestWhitelist();
+            LoadDoorBlacklist();
+            LoadSwitchBlacklist();
+            LoadChestWhitelist();
             return true;
         }
 
         public override void Render()
         {
             if (!Settings.Enable) return;
-            open();
+            Open();
         }
 
-        private void open()
+        private void Open()
         {
             var camera = ingameState.Camera;
             var playerPos = GameController.Player.Pos;
@@ -70,7 +70,7 @@ namespace AutoOpen
                 var isTargeted = entity.GetComponent<Targetable>().isTargeted;
 
                 //Doors
-                if (Settings.doors)
+                if (Settings.Doors)
                 {
                     var isBlacklisted = doorBlacklist != null && doorBlacklist.Contains(entity.Path);
 
@@ -86,32 +86,32 @@ namespace AutoOpen
                         if (!isBlacklisted) Graphics.DrawText(s, entityScreenPos, c, FontAlign.Center);
 
                         if (isTargeted)
-                            if (Keyboard.IsKeyPressed((int) Settings.toggleEntityKey.Value))
-                                toggleDoorBlacklistItem(entity.Path);
+                            if (Keyboard.IsKeyPressed((int) Settings.ToggleEntityKey.Value))
+                                ToggleDoorBlacklistItem(entity.Path);
 
                         if (Control.MouseButtons == MouseButtons.Left)
                         {
-                            var clickCount = getEntityClickedCount(entity);
-                            if (!isBlacklisted && entityDistanceToPlayer <= Settings.doorDistance && isClosed &&
+                            var clickCount = GetEntityClickedCount(entity);
+                            if (!isBlacklisted && entityDistanceToPlayer <= Settings.DoorDistance && isClosed &&
                                 clickCount <= 15)
                             {
-                                open(entityScreenPos, prevMousePosition);
+                                Open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
-                                if (Settings.BlockInput) Mouse.blockInput(true);
+                                if (Settings.BlockInput) Mouse.BlockInput_(true);
                             }
-                            else if (!isBlacklisted && entityDistanceToPlayer >= Settings.doorDistance &&
+                            else if (!isBlacklisted && entityDistanceToPlayer >= Settings.DoorDistance &&
                                      isClosed && clickCount >= 15)
                             {
                                 clickedEntities.Clear();
                             }
 
-                            if (Settings.BlockInput) Mouse.blockInput(false);
+                            if (Settings.BlockInput) Mouse.BlockInput_(false);
                         }
                     }
                 }
 
                 //Switches
-                if (Settings.switches)
+                if (Settings.Switches)
                 {
                     var isBlacklisted = switchBlacklist != null && switchBlacklist.Contains(entity.Path);
 
@@ -137,32 +137,32 @@ namespace AutoOpen
                         }
 
                         if (isTargeted)
-                            if (Keyboard.IsKeyPressed((int) Settings.toggleEntityKey.Value))
-                                toggleSwitchBlacklistItem(entity.Path);
+                            if (Keyboard.IsKeyPressed((int) Settings.ToggleEntityKey.Value))
+                                ToggleSwitchBlacklistItem(entity.Path);
 
                         if (Control.MouseButtons == MouseButtons.Left)
                         {
-                            var clickCount = getEntityClickedCount(entity);
-                            if (!isBlacklisted && entityDistanceToPlayer <= Settings.switchDistance && !switched &&
+                            var clickCount = GetEntityClickedCount(entity);
+                            if (!isBlacklisted && entityDistanceToPlayer <= Settings.SwitchDistance && !switched &&
                                 clickCount <= 15)
                             {
-                                open(entityScreenPos, prevMousePosition);
+                                Open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
-                                if (Settings.BlockInput) Mouse.blockInput(true);
+                                if (Settings.BlockInput) Mouse.BlockInput_(true);
                             }
-                            else if (!isBlacklisted && entityDistanceToPlayer >= Settings.switchDistance &&
+                            else if (!isBlacklisted && entityDistanceToPlayer >= Settings.SwitchDistance &&
                                      !switched && clickCount >= 15)
                             {
                                 clickedEntities.Clear();
                             }
 
-                            if (Settings.BlockInput) Mouse.blockInput(false);
+                            if (Settings.BlockInput) Mouse.BlockInput_(false);
                         }
                     }
                 }
 
                 //Chests
-                if (Settings.chests)
+                if (Settings.Chests)
                     if (entity.HasComponent<Chest>() || entity.Path.ToLower().Contains("chest"))
                     {
                         var isOpened = entity.GetComponent<Chest>().IsOpened;
@@ -172,33 +172,33 @@ namespace AutoOpen
                             Graphics.DrawText("Open me!", entityScreenPos, Color.LimeGreen, FontAlign.Center);
 
                         if (isTargeted)
-                            if (Keyboard.IsKeyPressed((int) Settings.toggleEntityKey.Value))
-                                toggleChestWhitelistItem(entity.Path);
+                            if (Keyboard.IsKeyPressed((int) Settings.ToggleEntityKey.Value))
+                                ToggleChestWhitelistItem(entity.Path);
 
                         if (Control.MouseButtons == MouseButtons.Left)
                         {
-                            var clickCount = getEntityClickedCount(entity);
+                            var clickCount = GetEntityClickedCount(entity);
 
-                            if (isTargetable && whitelisted && entityDistanceToPlayer <= Settings.chestDistance &&
+                            if (isTargetable && whitelisted && entityDistanceToPlayer <= Settings.ChestDistance &&
                                 !isOpened && clickCount <= 15)
                             {
-                                open(entityScreenPos, prevMousePosition);
+                                Open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
-                                if (Settings.BlockInput) Mouse.blockInput(true);
+                                if (Settings.BlockInput) Mouse.BlockInput_(true);
                             }
                             else if (isTargetable && whitelisted &&
-                                     entityDistanceToPlayer >= Settings.chestDistance && !isOpened &&
+                                     entityDistanceToPlayer >= Settings.ChestDistance && !isOpened &&
                                      clickCount >= 15)
                             {
                                 clickedEntities.Clear();
                             }
 
-                            if (Settings.BlockInput) Mouse.blockInput(false);
+                            if (Settings.BlockInput) Mouse.BlockInput_(false);
                         }
                     }
 
                 //Shrines
-                if (Settings.shrines)
+                if (Settings.Shrines)
                     if (entity.HasComponent<Shrine>() || entity.Path.ToLower().Contains("darkshrine"))
                     {
                         var isAvailable = entity.GetComponent<Shrine>().IsAvailable;
@@ -209,28 +209,28 @@ namespace AutoOpen
 
                         if (Control.MouseButtons == MouseButtons.Left)
                         {
-                            var clickCount = getEntityClickedCount(entity);
+                            var clickCount = GetEntityClickedCount(entity);
 
-                            if (isTargetable && entityDistanceToPlayer <= Settings.shrineDistance &&
+                            if (isTargetable && entityDistanceToPlayer <= Settings.ShrineDistance &&
                                 clickCount <= 15)
                             {
-                                open(entityScreenPos, prevMousePosition);
+                                Open(entityScreenPos, prevMousePosition);
                                 clickedEntities[entity.Address] = clickCount + 1;
-                                if (Settings.BlockInput) Mouse.blockInput(true);
+                                if (Settings.BlockInput) Mouse.BlockInput_(true);
                             }
-                            else if (isTargetable && entityDistanceToPlayer >= Settings.shrineDistance &&
+                            else if (isTargetable && entityDistanceToPlayer >= Settings.ShrineDistance &&
                                      clickCount >= 15)
                             {
                                 clickedEntities.Clear();
                             }
 
-                            if (Settings.BlockInput) Mouse.blockInput(false);
+                            if (Settings.BlockInput) Mouse.BlockInput_(false);
                         }
                     }
             }
         }
 
-        private int getEntityClickedCount(Entity entity)
+        private int GetEntityClickedCount(Entity entity)
         {
             var clickCount = 0;
             if (clickedEntities.ContainsKey(entity.Address))
@@ -241,19 +241,19 @@ namespace AutoOpen
             return clickCount;
         }
 
-        private void open(Vector2 entityScreenPos, Vector2 prevMousePosition)
+        private void Open(Vector2 entityScreenPos, Vector2 prevMousePosition)
         {
             entityScreenPos += windowOffset;
-            Mouse.moveMouse(entityScreenPos);
+            Mouse.MoveMouse(entityScreenPos);
             Mouse.LeftUp(0);
             Mouse.LeftDown(0);
             Mouse.LeftUp(0);
-            Mouse.moveMouse(prevMousePosition);
+            Mouse.MoveMouse(prevMousePosition);
             Mouse.LeftDown(0);
             Thread.Sleep(Settings.Speed);
         }
 
-        private void loadDoorBlacklist()
+        private void LoadDoorBlacklist()
         {
             try
             {
@@ -262,11 +262,11 @@ namespace AutoOpen
             catch (Exception)
             {
                 File.Create(DirectoryFullName + "\\doorBlacklist.txt");
-                loadDoorBlacklist();
+                LoadDoorBlacklist();
             }
         }
 
-        private void loadSwitchBlacklist()
+        private void LoadSwitchBlacklist()
         {
             try
             {
@@ -275,11 +275,11 @@ namespace AutoOpen
             catch (Exception)
             {
                 File.Create(DirectoryFullName + "\\switchBlacklist.txt");
-                loadSwitchBlacklist();
+                LoadSwitchBlacklist();
             }
         }
 
-        private void loadChestWhitelist()
+        private void LoadChestWhitelist()
         {
             try
             {
@@ -288,11 +288,11 @@ namespace AutoOpen
             catch (Exception)
             {
                 File.Create(DirectoryFullName + "\\chestWhitelist.txt");
-                loadChestWhitelist();
+                LoadChestWhitelist();
             }
         }
 
-        private void toggleDoorBlacklistItem(string name)
+        private void ToggleDoorBlacklistItem(string name)
         {
             if (doorBlacklist.Contains(name))
             {
@@ -308,7 +308,7 @@ namespace AutoOpen
             File.WriteAllLines(DirectoryFullName + "\\doorBlacklist.txt", doorBlacklist);
         }
 
-        private void toggleSwitchBlacklistItem(string name)
+        private void ToggleSwitchBlacklistItem(string name)
         {
             if (switchBlacklist.Contains(name))
             {
@@ -324,7 +324,7 @@ namespace AutoOpen
             File.WriteAllLines(DirectoryFullName + "\\switchBlacklist.txt", switchBlacklist);
         }
 
-        private void toggleChestWhitelistItem(string name)
+        private void ToggleChestWhitelistItem(string name)
         {
             if (chestWhitelist.Contains(name))
             {
