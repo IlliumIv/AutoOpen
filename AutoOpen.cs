@@ -42,7 +42,7 @@ namespace AutoOpen
             if (!Settings.Enable) return;
             open();
         }
-        private Coroutine CoroutineWorker;
+        private DateTime lastTryOpenHeistDoor = DateTime.Now;
        
         private void open()
         {
@@ -76,8 +76,11 @@ namespace AutoOpen
                 {
                     if (entity.Path.ToLower().Contains("door") && entity.Path.ToLower().Contains("heist") &&entityDistanceToPlayer <=Settings.doorDistance*5 && isTargetable)
                     {
-                        Keyboard.PressKey((byte)Keys.V);
-                     
+                        if (DateTime.Now.Subtract(lastTryOpenHeistDoor).TotalMilliseconds > 200)
+                        {
+                            Keyboard.PressKey((byte)Keys.V);
+                            lastTryOpenHeistDoor = DateTime.Now;
+                        }
                     }
                     var isBlacklisted = doorBlacklist != null && doorBlacklist.Contains(entity.Path);
 
