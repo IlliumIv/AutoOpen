@@ -8,6 +8,7 @@ using AutoOpen.Utils;
 using ExileCore;
 using ExileCore.PoEMemory.Components;
 using ExileCore.PoEMemory.MemoryObjects;
+using ExileCore.Shared;
 using ExileCore.Shared.Enums;
 using ExileCore.Shared.Helpers;
 using SharpDX;
@@ -41,7 +42,8 @@ namespace AutoOpen
             if (!Settings.Enable) return;
             open();
         }
-
+        private Coroutine CoroutineWorker;
+       
         private void open()
         {
             var camera = ingameState.Camera;
@@ -68,10 +70,15 @@ namespace AutoOpen
 
                 var isTargetable = entity.GetComponent<Targetable>().isTargetable;
                 var isTargeted = entity.GetComponent<Targetable>().isTargeted;
-
+                
                 //Doors
                 if (Settings.doors)
                 {
+                    if (entity.Path.ToLower().Contains("door") && entity.Path.ToLower().Contains("heist") &&entityDistanceToPlayer <=Settings.doorDistance*5 && isTargetable)
+                    {
+                        Keyboard.PressKey((byte)Keys.V);
+                     
+                    }
                     var isBlacklisted = doorBlacklist != null && doorBlacklist.Contains(entity.Path);
 
 
