@@ -10,7 +10,7 @@ namespace AutoOpen
 
         public Settings()
         {
-            Enable = new ToggleNode(true);
+            Enable = new ToggleNode(false);
             Speed = new RangeNode<int>(1, 0, 100);
             BlockInput = new ToggleNode(true);
 
